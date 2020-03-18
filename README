@@ -5,10 +5,10 @@
 CentOS Linux release 7.6.1810 (Core)
 ```
 ## Install Epel 
-yum install epel-release
+yum install epel-release -y
 
 ## Install Ansible
-yum remove ansible -y
+yum install ansible -y
 
 ## ANSIBLE 
 
