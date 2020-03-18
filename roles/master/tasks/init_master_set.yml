@@ -1,0 +1,43 @@
+- name: out init config file
+  shell: |
+    rm -rf /tmp/kubeadm.yml
+    kubeadm config print init-defaults --kubeconfig ClusterConfiguration > /tmp/kubeadm.yml
+
+- name: set localAPIEndpoint
+  shell: |
+    sed -i "s/\(.*advertiseAddress:\).*/\1 {{ansible_host}}/" /tmp/kubeadm.yml
+
+- name: set imageRepository
+  shell: |
+    sed -i "s#\(.*imageRepository:\).*#\1 {{kubernetes_image_reg}}#" /tmp/kubeadm.yml
+  when: kubernetes_image_reg is defined
+
+- name: set kubernetesVersion
+  shell: |
+    sed -i "s/\(.*kubernetesVersion:\).*/\1 v{{kubernetes_version}}/" /tmp/kubeadm.yml
+
+- name: set dnsDomain
+  shell: |
+    sed -i 's/\(.*dnsDomain:\).*/\1 {{domain}}/' /tmp/kubeadm.yml
+
+- name: set pod cidr
+  shell: |
+    sed -i "/dnsDomain:/a\  podSubnet: {{pod_cidr}}" /tmp/kubeadm.yml
+
+- name: set svc cidr
+  shell: |
+    sed -i "s#\(.*serviceSubnet:\).*#\1 {{svc_cidr}}#" /tmp/kubeadm.yml
+
+- name: set ipvs
+  shell: |
+    echo "---" >> /tmp/kubeadm.yml
+    echo "apiVersion: kubeproxy.config.k8s.io/v1alpha1" >> /tmp/kubeadm.yml
+    echo "kind: KubeProxyConfiguration" >> /tmp/kubeadm.yml
+    echo "featureGates:" >> /tmp/kubeadm.yml
+    echo "  SupportIPVSProxyMode: true" >> /tmp/kubeadm.yml
+    echo "mode: ipvs" >> /tmp/kubeadm.yml
+
+- name: set apiserver ha config
+  shell: |
+    sed -i "/clusterName:/acontrolPlaneEndpoint: {{master_vip}}:{{apiserver_proxy_port}}" /tmp/kubeadm.yml
+  when: groups['kubernetes-masters'] | length >= 3

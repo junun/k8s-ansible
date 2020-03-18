@@ -1,0 +1,4 @@
+- name: approve kubelet cert
+  shell: |
+    sleep 10
+    for i in `kubectl get csr | grep Pending| awk '{print $1}'`;do kubectl certificate approve $i;done

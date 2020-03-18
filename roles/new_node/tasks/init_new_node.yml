@@ -1,0 +1,74 @@
+# - name: check sys init
+#   shell: "grep  'HISTTIMEFORMAT' /etc/bashrc"
+#   register: syscheck
+#   ignore_errors: True
+#   failed_when: syscheck.rc >= 1
+
+- name: Generate nodes file
+  shell: echo "######" > /tmp/nodes
+
+- name: Append hostnames in the nodes file
+  shell: echo "{{ hostvars[item]['ansible_host'] }} {{ hostvars[item]['inventory_hostname'] }}" >> /tmp/nodes
+  with_items: "{{ groups['kubernetes-nodes'] }}"
+
+- name: check node hostname
+  shell: "grep {{ inventory_hostname }} /tmp/nodes"
+  register: hostname_check
+  ignore_errors: True
+  failed_when: hostname_check.rc >= 1
+# - debug: msg={{hostname_check.rc}}
+
+- block:
+  # - name: Run tasks/set_hostname.yml
+  #   include_role:
+  #     name: sys_init
+  #     tasks_from: set_hostname
+
+  # - name: Run tasks/sys_optimization.yml
+  #   include_role:
+  #     name: sys_init
+  #     tasks_from: sys_optimization
+
+  # - name: Run tasks/add_docker-ce_repo.yml
+  #   include_role:
+  #     name: sys_init
+  #     tasks_from: add_docker-ce_repo
+
+  # - name: Run tasks/add_kubernetes_repo.yml
+  #   include_role:
+  #     name: sys_init
+  #     tasks_from: add_kubernetes_repo
+
+  # - name: Run tasks/generate_hosts.yml
+  #   include_role:
+  #     name: sys_init
+  #     tasks_from: generate_hosts
+
+  # - name: Run tasks/update_hosts.yml
+  #   include_role:
+  #     name: sys_init
+  #     tasks_from: update_hosts
+
+  # - name: Run tasks/disable_swap.yml
+  #   include_role:
+  #     name: sys_init
+  #     tasks_from: disable_swap
+
+  # - name: Run tasks/copy_ipvs_mod_file.yml
+  #   include_role:
+  #     name: sys_init
+  #     tasks_from: copy_ipvs_mod_file
+
+  # - name: Run tasks/copy_sysctl-k8s_file.yml
+  #   include_role:
+  #     name: sys_init
+  #     tasks_from: copy_sysctl-k8s_file
+  
+  - name: join node
+    shell: "{{ hostvars[groups['kubernetes-masters'][0]]['new_node_join_cmd_out'].stdout }}"
+    register: join_node_log
+    until: join_node_log.rc == 0
+    retries: 10
+    delay: 30
+  when: hostname_check.rc >= 1
+  # when: syscheck.rc >= 1 and hostname_check.rc >= 1

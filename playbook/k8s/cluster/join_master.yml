@@ -1,0 +1,4 @@
+- name: join master
+  hosts: kubernetes-masters[1:]
+  roles:
+    - role: join_master

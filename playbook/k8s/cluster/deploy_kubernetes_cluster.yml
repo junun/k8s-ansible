@@ -1,0 +1,9 @@
+- import_playbook: init_host_conf.yml
+- import_playbook: install_docker.yml
+- import_playbook: install_kubelet.yml
+- import_playbook: install_ha.yml
+- import_playbook: init_master.yml
+- import_playbook: join_master.yml
+- import_playbook: join_node.yml
+- import_playbook: approve_cert.yml
+- import_playbook: install_calico.yml

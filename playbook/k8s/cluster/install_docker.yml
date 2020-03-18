@@ -1,0 +1,4 @@
+- name: install docker
+  hosts: kubernetes-hosts
+  roles:
+    - role: docker

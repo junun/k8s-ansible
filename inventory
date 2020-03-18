@@ -1,0 +1,55 @@
+[kubernetes-masters]
+qa-k8s-master01.topc.com ansible_host=10.57.1.201 ansible_port=22 ansible_user=root ansible_ssh_pass=redhat keepalived_master=true
+qa-k8s-master02.topc.com ansible_host=10.57.1.202 ansible_port=22 ansible_user=root ansible_ssh_pass=redhat
+qa-k8s-master03.topc.com ansible_host=10.57.1.203 ansible_port=22 ansible_user=root ansible_ssh_pass=redhat
+
+[kubernetes-nodes]
+qa-k8s-node01.topc.com ansible_host=10.57.1.204 ansible_port=22 ansible_user=root ansible_ssh_pass=redhat
+qa-k8s-node02.topc.com ansible_host=10.57.1.205 ansible_port=22 ansible_user=root ansible_ssh_pass=redhat
+
+[kubernetes-hosts:children]
+kubernetes-masters
+kubernetes-nodes
+
+## 用于添加新的node节点
+[kubernetes-new-nodes]
+
+
+## 用于添加新的node节点
+[kubernetes-hosts-with-new:children]
+kubernetes-masters
+kubernetes-nodes
+kubernetes-new-nodes
+
+
+[all:vars]
+# 需要安装的kubernetes,docker版本
+kubernetes_version = 1.17.0
+docker_version = 18.09.8
+
+# 域名
+domain   = topc.com
+pod_cidr = 172.10.0.0/16
+svc_cidr = 10.96.0.0/12
+
+# master ha
+#net_interface      = eth0
+master_vip          = 10.57.1.200
+master_vip_domain   = apiserver-vip.topc.com
+apiserver_proxy_port= 666
+
+# 设置docker及kubernetes yum仓库的basseurl
+docker_repo_url     = http://mirror.hoinnet.com/docker-ce/linux/centos/7/$basearch/stable
+#docker_repo_url    = https://mirrors.ustc.edu.cn/docker-ce/linux/centos/7/$basearch/stable
+kubernetes_repo_url = https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
+
+# 设置从哪里获取kubernetes的镜像,当然此仓库中是要包含官方的镜像的
+# 如果不设置则需要设置地下的翻墙配置,二者选其一即可
+kubernetes_image_reg = reg.hoinnet.com/google
+
+# 是否开启docker访问google的功能,如果开启则需要设置下面几个参数,如果为false则下面的配置是不生效的
+docker_access_google = false
+docker_proxy_url     = http://10.57.1.10:1080
+docker_no_proxy      = 127.0.0.0/8,10.57.1.0/24,192.168.0.0/16
+
+

@@ -1,0 +1,9 @@
+- name: Disable swap
+  shell: |
+    swapoff -a
+    echo 0 > /proc/sys/vm/swappiness
+    sed -ri  's/^[^#]\S+\s+none\s+swap\s+/# &/' /etc/fstab
+    sed -ri  's/^[^#]\S+\s+swap\s+swap\s+/# &/' /etc/fstab
+  args:
+    executable: /bin/bash
+  ignore_errors: yes

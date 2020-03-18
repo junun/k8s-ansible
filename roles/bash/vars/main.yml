@@ -1,0 +1,4 @@
+---
+bash_version: 4.3.30
+bash_6x: bash-4.3.30-4.el6.x86_64.rpm
+bash_7x: bash-4.3.30-4.el7.x86_64.rpm

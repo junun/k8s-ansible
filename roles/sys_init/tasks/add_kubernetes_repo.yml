@@ -1,0 +1,8 @@
+- name: Add kubernetes Repo
+  yum_repository:
+    name: kubernetes
+    description: k8s repo
+    file: kubernetes
+    baseurl: "{{ kubernetes_repo_url }}"
+    enabled: yes
+    gpgcheck: no

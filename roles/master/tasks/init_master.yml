@@ -1,0 +1,50 @@
+- name: init master
+  shell: kubeadm init --config=/tmp/kubeadm.yml --upload-certs |  tee /tmp/kubeadm-init.log
+  register: init_master_log
+  until: init_master_log.rc == 0
+  retries: 5
+  delay: 5
+
+- name: copy sh
+  copy:
+    src: get_join_cmd.sh
+    dest: /tmp/get_join_cmd.sh
+    owner: root
+    group: root
+    mode: u=rwx,g=r,o=r
+
+- name: get join master cmd
+  shell: bash /tmp/get_join_cmd.sh master
+  register: master_join_cmd_out
+
+- name: get join node cmd
+  shell: bash /tmp/get_join_cmd.sh node
+  register: node_join_cmd_out
+
+- name: get join cmd
+  set_fact:
+    master_join_cmd: "{{master_join_cmd_out.stdout}}"
+    node_join_cmd: "{{node_join_cmd_out.stdout}}"
+
+- name: set kubectl conf
+  shell: |
+    rm -rf /root/.kube
+    mkdir -p /root/.kube
+    cp -avf /etc/kubernetes/admin.conf /root/.kube/config
+
+- name: test kubectl cmd
+  shell: kubectl get node
+  register: kubectl_log
+  until: kubectl_log.rc == 0
+  retries: 5
+  delay: 5
+
+- name: set kubelet renew certificate
+  include_tasks: ../../common/tasks/set_kube-controller-manager.yml
+
+- name: show master_join_cmd
+  debug: msg={{master_join_cmd}}
+  when: groups['kubernetes-masters'] | length >= 3
+
+- name: show node_join_cmd
+  debug: msg={{node_join_cmd}}

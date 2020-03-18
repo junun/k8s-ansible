@@ -1,0 +1,4 @@
+- name: install kubelet
+  hosts: kubernetes-hosts
+  roles:
+    - role: kubelet

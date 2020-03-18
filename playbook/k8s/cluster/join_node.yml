@@ -1,0 +1,4 @@
+- name: join node
+  hosts: kubernetes-nodes
+  roles:
+    - role: join_node

@@ -1,0 +1,6 @@
+- name: join node
+  shell: "{{ hostvars[groups['kubernetes-masters'][0]]['node_join_cmd'] }}"
+  register: join_node_log
+  until: join_node_log.rc == 0
+  retries: 10
+  delay: 30

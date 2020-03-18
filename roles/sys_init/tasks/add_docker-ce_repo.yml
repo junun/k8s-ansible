@@ -1,0 +1,8 @@
+- name: Add Docker-CE Repo
+  yum_repository:
+    name: Dcoker-CE
+    description: Dcoker CE repo
+    file: Docker-CE
+    baseurl: "{{ docker_repo_url }}"
+    enabled: yes
+    gpgcheck: no

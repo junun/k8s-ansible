@@ -1,0 +1,5 @@
+- name: init hostname
+  hosts: kubernetes-hosts
+  roles:
+    - role: sys_init
+    - role: bash

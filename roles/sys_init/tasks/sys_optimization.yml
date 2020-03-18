@@ -1,0 +1,16 @@
+- name: check sys init
+  shell: "grep  'HISTTIMEFORMAT' /etc/bashrc"
+  register: syscheck1
+  ignore_errors: True
+  failed_when: syscheck1.rc >= 1
+- debug: msg={{syscheck1.rc}}
+- block:
+  - name: get linux version
+    shell: "rpm --eval '%{centos_ver}'"
+    register: version
+  - name: Copy and Execute the el7 script
+    script: "{{ el7_sys }}"
+    register: output
+  - debug: var=output.stdout_lines
+    when: version.stdout == "7"
+  when: syscheck1.rc >= 1

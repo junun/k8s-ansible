@@ -1,0 +1,16 @@
+---
+- name: Gather the rpm package facts
+  package_facts:
+    manager: auto
+
+- block:
+  - name: haproxy
+    import_tasks: install_haproxy.yml
+    when: groups['kubernetes-masters'] | length >= 3
+  when: "'haproxy' not in ansible_facts.packages"
+
+- block:
+  - name: keepalived
+    import_tasks: install_keepalived.yml
+    when: groups['kubernetes-masters'] | length >= 3
+  when: "'keepalived' not in ansible_facts.packages"

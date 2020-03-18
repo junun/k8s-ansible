@@ -1,0 +1,11 @@
+- name: copy ipvs.modeles file
+  copy:
+    src: ipvs.modules
+    dest: /etc/sysconfig/modules/ipvs.modules
+    owner: root
+    group: root
+    mode: u=rwx,g=r,o=r
+
+- name: exec ipvs.modules
+  shell:
+    cmd: /bin/bash /etc/sysconfig/modules/ipvs.modules

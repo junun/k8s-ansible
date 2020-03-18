@@ -1,0 +1,31 @@
+- name: install kubelet
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - kubelet-{{kubernetes_version}}
+    - kubeadm-{{kubernetes_version}}
+    - kubectl-{{kubernetes_version}}
+    - ipvsadm
+
+- name: copy kubelet.conf
+  copy:
+    src: kubelet.conf
+    dest: /etc/sysconfig/kubelet
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+
+- name: copy kubeadm
+  copy:
+    src: kubeadm
+    dest: /usr/bin/kubeadm
+    owner: root
+    group: root
+    mode: u=rwx,g=rx,o=rx
+
+- name: enable kubelet
+  systemd:
+    name: kubelet
+    daemon_reload: yes
+    enabled: yes

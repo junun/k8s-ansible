@@ -1,0 +1,19 @@
+- name: install keepalived
+  yum:
+    name: keepalived-1.3.5
+    state: present
+- name: copy keepalived config
+  template:
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+
+- name: start and enable keepalived
+  systemd:
+    name: keepalived
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'

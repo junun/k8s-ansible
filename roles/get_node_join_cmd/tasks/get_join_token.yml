@@ -1,0 +1,18 @@
+- name: copy sh
+  copy:
+    src: get_new_node_join_cmd.sh
+    dest: /tmp/get_new_node_join_cmd.sh
+    owner: root
+    group: root
+    mode: u=rwx,g=r,o=r
+
+- name: new node join cmd
+  shell: bash /tmp/get_new_node_join_cmd.sh
+  register: new_node_join_cmd_out
+
+- name: set new node join cmd
+  set_fact:
+    new_node_join_cmd: "{{new_node_join_cmd_out.stdout}}"
+
+- name: show new_node_join_cmd
+  debug: msg={{new_node_join_cmd}}

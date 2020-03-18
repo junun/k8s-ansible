@@ -1,0 +1,11 @@
+- name: copy ipvs.modeles file to nodes
+  copy:
+    src: network-performance.conf
+    dest: /etc/sysctl.d/network-performance.conf
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+
+- name: sysctl -p
+  shell:
+    cmd: sysctl --system

@@ -1,0 +1,4 @@
+- name: init master
+  hosts: kubernetes-masters[0]
+  roles:
+    - role: master

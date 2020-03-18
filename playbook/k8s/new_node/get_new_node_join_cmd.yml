@@ -1,0 +1,4 @@
+- name: get join cmd by master
+  hosts: kubernetes-masters[0]
+  roles:
+    - role: get_node_join_cmd

@@ -1,0 +1,41 @@
+---
+- name: check bash version
+  shell: "echo $BASH_VERSION | awk -F '(' '{print $1}'"
+  register: bashversion
+- debug: msg={{bashversion.stdout}}
+- block:
+  - name: get linux version
+    shell: "rpm --eval '%{centos_ver}'"
+    register: version
+  - name: debug
+    debug: msg={{version.stdout}}
+  - name: back up sys  bash
+    shell: "cp -rf /bin/bash /opt/bash_sys_bak"
+  - name: copy centos6 bash dep  rpm to remote host
+    copy:
+      src: libiconv-1.15-1.el6.x86_64.rpm
+      dest: /usr/local/src/libiconv-1.15-1.el6.x86_64.rpm
+      force: no
+    when: version.stdout == "6"
+  - name: copy centos6 bash rpm to remote host
+    copy:
+      src: "{{ bash_6x }}"
+      dest: /usr/local/src/{{ bash_6x }}
+      force: no
+    when: version.stdout == "6"
+  - name: copy centos7 bash rpm to remote host
+    copy:
+      src: "{{ bash_7x }}"
+      dest: /usr/local/src/{{ bash_7x }}
+      force: no
+    when: version.stdout == "7"
+  - name: installlibiconv rpm in centos6
+    command: rpm -ivh /usr/local/src/libiconv-1.15-1.el6.x86_64.rpm
+    when: version.stdout == "6"
+  - name: install bash rpm in centos6
+    command: rpm -ivh /usr/local/src/{{ bash_6x }}
+    when: version.stdout == "6"
+  - name: install bash rpm in centos7
+    command: rpm -ivh /usr/local/src/{{ bash_7x }}
+    when: version.stdout == "7"
+  when: bashversion.stdout !=  bash_version 

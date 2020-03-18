@@ -1,0 +1,19 @@
+- import_tasks: generate_hosts.yml
+- import_tasks: update_hosts.yml
+
+- name: check sys init
+  shell: "grep  'HISTTIMEFORMAT' /etc/bashrc"
+  register: syscheck
+  ignore_errors: True
+  failed_when: syscheck.rc >= 1
+- debug: msg={{syscheck.rc}}
+
+- block:
+  - import_tasks: set_hostname.yml
+  - import_tasks: sys_optimization.yml
+  - import_tasks: add_docker-ce_repo.yml
+  - import_tasks: add_kubernetes_repo.yml
+  - import_tasks: disable_swap.yml
+  - import_tasks: copy_ipvs_mod_file.yml
+  - import_tasks: copy_sysctl-k8s_file.yml
+  when: syscheck.rc >= 1

@@ -1,0 +1,36 @@
+global_defs {
+   router_id 201
+}
+
+vrrp_script check_haproxy {
+    script "killall -0 haproxy"
+    interval 3
+    fall 5
+    rise 10
+}
+
+vrrp_instance haproxy {
+{% if keepalived_master is defined %}
+    state MASTER
+    priority 200
+{% else %}
+    state BACKUP
+    priority 190
+{% endif %}
+    interface eth0
+    virtual_router_id 51
+    advert_int 1
+
+    authentication {
+        auth_type PASS
+        auth_pass password
+    }
+
+    virtual_ipaddress {
+        {{master_vip}}
+    }
+
+    track_script {
+        check_haproxy
+    }
+}

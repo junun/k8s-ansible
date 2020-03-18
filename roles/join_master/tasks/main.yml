@@ -1,0 +1,15 @@
+# - name: show aa
+#   debug: msg="{{ hostvars[groups['kubernetes-masters'][0]]['master_join_cmd'] }}"
+#   debug: msg="{{ groups['kubernetes-masters'][1:] }}"
+#   debug: msg="{{ hostvars[item]['ansible_host'] }}"
+
+- name: join master
+  shell: "{{ hostvars[groups['kubernetes-masters'][0]]['master_join_cmd'] }}"
+  register: join_master_log
+  until: join_master_log.rc == 0
+  retries: 10
+  delay: 30
+  when: groups['kubernetes-masters'] | length >= 3
+
+- name: set kubelet renew certificate
+  include_tasks: ../../common/tasks/set_kube-controller-manager.yml

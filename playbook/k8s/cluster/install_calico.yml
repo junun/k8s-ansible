@@ -1,0 +1,4 @@
+- name: init calico
+  hosts: kubernetes-masters[0]
+  roles:
+    - role: calico

@@ -1,0 +1,5 @@
+---
+- name: install ha
+  hosts: kubernetes-masters[0:1]
+  roles:
+    - role: ha

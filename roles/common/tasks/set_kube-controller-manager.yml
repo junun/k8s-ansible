@@ -1,0 +1,3 @@
+- name: add kubelet renew certificate conf
+  shell: |
+    sed -i '/image:/i\    - --experimental-cluster-signing-duration=876000h0m0s' /etc/kubernetes/manifests/kube-controller-manager.yaml
