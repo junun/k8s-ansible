@@ -42,5 +42,11 @@ ansible-playbook  deploy_kubernetes_cluster.yml -i /etc/ansible/inventory
 ```
 cd /etc/ansible/playbook/k8s/new_node
 
+ansible-playbook add_new_node.yml -i /etc/ansible/inventory
+```
 
+## 配置文件
+
+```
+/etc/ansible/inventory
 ```
