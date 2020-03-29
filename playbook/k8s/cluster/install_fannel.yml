@@ -1,0 +1,4 @@
+- name: init fannel
+  hosts: kubernetes-masters[0]
+  roles:
+    - role: fannel

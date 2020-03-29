@@ -1,0 +1,11 @@
+- name: copy kube-fannel.yaml
+  copy:
+    src: kube-fannel.yaml
+    dest: /tmp/kube-fannel.yaml
+    owner: root
+    group: root
+    mode: u=rwx,g=r,o=r
+
+- name: apply calico
+  shell: |
+    kubectl apply -f /tmp/kube-fannel.yaml

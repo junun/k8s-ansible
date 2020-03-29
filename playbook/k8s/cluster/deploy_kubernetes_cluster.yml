@@ -7,3 +7,4 @@
 - import_playbook: join_node.yml
 - import_playbook: approve_cert.yml
 - import_playbook: install_calico.yml
+#- import_playbook: install_fannel.yml
