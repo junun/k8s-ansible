@@ -76,12 +76,27 @@ cd /etc/ansible/playbook/k8s/new_node
 ansible-playbook add_new_node.yml -i /etc/ansible/inventory
 ```
 
-
-## 问题
+### fannel 网络插件安装后出现pod无法创建问题
+![](media/15855502882611.jpg)
 
 ```
-1) 网络插件 fannel 暂时没有调通
+// 检查出错原因
+kubectl describe pods coredns-578dc6bd-82qp4 -n kube-system
+```
+![](media/15855503638622.jpg)
 
-2）其他待完善问题
+```
+搞了很久， 重新弄个纯净环境， 一切正常。 那么问题肯定是出现环境上。
+
+因为我之前安装k8s集群用的是 calico 网络插件， 然后执行了 kubeadm reset 重置集群，切换安装集群用 fannel 网络插件， 然后执行该命令的时候， 有个很重要的步骤我没有做。
+```
+![](media/15855507114737.jpg)
+
+```
+// 执行
+mv  /etc/cni/net.d/* /tmp/
+ipvsadm --clear
+
+再来一次， 一切正常。
 ```
 

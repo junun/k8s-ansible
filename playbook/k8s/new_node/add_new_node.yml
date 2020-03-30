@@ -1,3 +1,4 @@
 - import_playbook: init_all_host_conf.yml
 - import_playbook: get_new_node_join_cmd.yml
 - import_playbook: new_node.yml
+- import_playbook: approve_cert.yml 
